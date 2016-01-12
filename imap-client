@@ -18,7 +18,18 @@ my %commands = (
             print "$folder created\n";
         }
     },
+    'delete-folders' => sub {
+        my ( $imap, @folders ) = @_;
+        for my $folder (@folders) {
+            $imap->delete($folder)
+              or die "Delete '$folder' error: ", $imap->LastError, "\n";
+            print "$folder deleted\n";
+        }
+    },
 );
+
+# aliases
+$commands{'remove-folders'} = $commands{'delete-folders'};
 
 # command auto-completion
 sub get_command {
