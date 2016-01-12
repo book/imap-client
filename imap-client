@@ -1,0 +1,28 @@
+#!/usr/bin/env perl
+use strict;
+use warnings;
+use Mail::IMAPClient;
+use Getopt::Long;
+
+# list of supported commands
+my %commands = (
+    'list-folders' => sub {
+        my ($imap) = @_;
+        print "$_\n" for sort @{ $imap->folders };
+    },
+);
+
+# command-line options
+GetOptions(
+    \my %option,    # these are all arguments to Mail::IMAPClient->new()
+    'Server|server|host=s', 'Port|port=s',            # connection
+    'User=s',               'Password|password=s',    # credentials
+    'Debug|debug',
+    'Ssl|ssl',
+);
+
+# guess the command
+my $cmd = shift;
+die "Unknown command <$cmd>\n" if !exists $commands{$cmd};
+
+$commands{$cmd}->( Mail::IMAPClient->new(%option), @ARGV );
