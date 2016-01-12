@@ -12,6 +12,20 @@ my %commands = (
     },
 );
 
+# command auto-completion
+sub get_command {
+    my ($cmd) = @_;
+    die "No command given\n" if ! defined $cmd;
+
+    if ( my @matches = grep { /^$cmd/ } sort keys %commands ) {
+        die "Ambiguous command <$cmd>.\nDid you mean one of these?\n"
+          . "  @matches\n"
+          if @matches > 1;
+        return shift @matches;
+    }
+    else { die "Unknown command <$cmd>\n"; }
+}
+
 # command-line options
 GetOptions(
     \my %option,    # these are all arguments to Mail::IMAPClient->new()
@@ -22,7 +36,6 @@ GetOptions(
 );
 
 # guess the command
-my $cmd = shift;
-die "Unknown command <$cmd>\n" if !exists $commands{$cmd};
+my $cmd = get_command(shift);
 
 $commands{$cmd}->( Mail::IMAPClient->new(%option), @ARGV );
