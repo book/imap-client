@@ -10,6 +10,14 @@ my %commands = (
         my ($imap) = @_;
         print "$_\n" for sort @{ $imap->folders };
     },
+    'create-folders' => sub {
+        my ( $imap, @folders ) = @_;
+        for my $folder (@folders) {
+            $imap->create($folder)
+              or die "Create '$folder' error: ", $imap->LastError, "\n";
+            print "$folder created\n";
+        }
+    },
 );
 
 # command auto-completion
